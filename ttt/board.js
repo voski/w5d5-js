@@ -4,6 +4,9 @@ function _setUpBoard(board) {
   board.grid = [];
   for (var i = 0; i < BOARDSIZE; i++) {
     board.grid.push(Array(BOARDSIZE));
+    for (var j = 0; j < board.grid[i].length; j++) {
+      board.grid[i][j] = '_';
+    }
   }
 }
 
@@ -13,8 +16,9 @@ function Board() {
 }
 
 Board.prototype.print = function() {
+  console.log("    a   b   c");
   for (var i = 0; i < this.grid.length; i++) {
-    console.log(JSON.stringify(this.grid[i]));
+    console.log(i + " " + JSON.stringify(this.grid[i]));
   }
 };
 
@@ -23,10 +27,7 @@ Board.prototype.setWinner = function(line){
 };
 
 function _winningLine(board, line) {
-  if (!line[0] || !line[1] || !line[2]) {
-    return false;
-  }
-  if (line[0] === line[1] && line[1] === line[2]) {
+  if (line[0] === line[1] && line[1] === line[2] && line[0] !== '_') {
     board.setWinner(line[0]);
     return true;
   }
@@ -70,7 +71,6 @@ function _checkDiags(board) {
   return false;
 }
 
-// call before trying to access winner!!!
 Board.prototype.won = function() {
   if (_checkRows(this) || _checkCols(this) || _checkDiags(this)) {
     return true;
@@ -93,23 +93,11 @@ Board.prototype.placeMark = function(pos, mark) {
   }
   var x = pos[0];
   var y = pos[1];
-  this.grid[x][y] = mark;
-  return true;
+  if (this.grid[x][y] !== 'x') {
+    this.grid[x][y] = mark;
+    return true;
+  }
+  return false;
 };
-
-// var b = new Board();
-// b.grid[0][0] = 'x';
-// b.grid[0][1] = 'x';
-// b.grid[0][2] = 'x';
-// b.print();
-// console.log(_transposeCol(b, 1));
-// b.won();
-// console.log(b.winner);
-// b.placeMark([0, 0], 'x');
-// b.placeMark([1, 1], 'x');
-// b.placeMark([2, 2], 'x');
-// b.print();
-// b.won();
-// console.log(b.winner);
 
 module.exports = Board;
